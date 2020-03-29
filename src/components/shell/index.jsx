@@ -1,13 +1,14 @@
 // @flow
 
 import React, { useState, type ChildrenArray } from 'react';
-import { graphql, StaticQuery } from 'gatsby';
+import { navigate, graphql, StaticQuery } from 'gatsby';
 import clsx from 'clsx';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Box from '@material-ui/core/Box';
 import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -23,6 +24,9 @@ import RvHookupIcon from '@material-ui/icons/RvHookup';
 import BusinessIcon from '@material-ui/icons/Business';
 import PersonIcon from '@material-ui/icons/Person';
 import MenuIcon from '@material-ui/icons/Menu';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
+import firebase from '../../firebase';
 
 const drawerWidth = 240;
 
@@ -129,6 +133,15 @@ function Shell({ children }: Props) {
     setOpen(false);
   }
 
+  function handleLogout() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        navigate('/');
+      });
+  }
+
   return (
     <StaticQuery
       query={query}
@@ -142,20 +155,38 @@ function Shell({ children }: Props) {
             })}
           >
             <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                className={clsx(classes.menuButton, {
-                  [classes.hide]: open
-                })}
+              <Box
+                width="100%"
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
               >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap>
-                Mini variant drawer
-              </Typography>
+                <Box display="flex" alignItems="center">
+                  <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    edge="start"
+                    className={clsx(classes.menuButton, {
+                      [classes.hide]: open
+                    })}
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography variant="h6" noWrap>
+                    parkabl | Admin
+                  </Typography>
+                </Box>
+                <Box>
+                  <IconButton
+                    color="inherit"
+                    aria-label="logout"
+                    onClick={handleLogout}
+                  >
+                    <ExitToAppIcon />
+                  </IconButton>
+                </Box>
+              </Box>
             </Toolbar>
           </AppBar>
           <Drawer

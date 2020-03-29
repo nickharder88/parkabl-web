@@ -9,7 +9,7 @@ module.exports = {
         links: [
           {
             key: 'operators',
-            name: 'operators',
+            name: 'Operators',
             icon: 'rv_hookup'
           },
           {
