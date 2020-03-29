@@ -25,12 +25,15 @@ import BusinessIcon from '@material-ui/icons/Business';
 import PersonIcon from '@material-ui/icons/Person';
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import firebase from '../../firebase';
+import Link from '../Link';
 
 const drawerWidth = 240;
 
 const menuIcons = {
+  dashboard: DashboardIcon,
   rv_hookup: RvHookupIcon,
   business: BusinessIcon,
   person: PersonIcon
@@ -218,7 +221,12 @@ function Shell({ children }: Props) {
                 const Icon = menuIcons[link.icon];
 
                 return (
-                  <ListItem button key={link.key}>
+                  <ListItem
+                    button
+                    key={link.key}
+                    component={Link}
+                    to={`/app/admin/${link.key}`}
+                  >
                     <ListItemIcon>
                       <Icon />
                     </ListItemIcon>

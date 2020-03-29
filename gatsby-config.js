@@ -8,6 +8,11 @@ module.exports = {
       admin: {
         links: [
           {
+            key: 'dashboard',
+            name: 'Dashboard',
+            icon: 'dashboard'
+          },
+          {
             key: 'operators',
             name: 'Operators',
             icon: 'rv_hookup'

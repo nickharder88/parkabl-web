@@ -2,13 +2,13 @@
 
 import Model from './model';
 
-import AddressModel, { type Address } from './address';
+import PropertyModel, { type Property } from './property';
 
 export type Tenant = {
   name: string,
   email: string,
   phone: string,
-  address: Address
+  property: Property
 };
 
 class TenantModel extends Model<Tenant> {
@@ -16,8 +16,8 @@ class TenantModel extends Model<Tenant> {
     return 'tenants';
   }
 
-  address(): Promise<?AddressModel> {
-    return this.hasOne<Address, AddressModel>(AddressModel, 'address');
+  property(): Promise<?PropertyModel> {
+    return this.hasOne<Property, PropertyModel>(PropertyModel, 'address');
   }
 }
 

@@ -22,4 +22,4 @@ class VehicleModel extends Model<Vehicle> {
   }
 }
 
-export default TenantModel;
+export default VehicleModel;
