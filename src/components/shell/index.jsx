@@ -24,9 +24,6 @@ import BusinessIcon from '@material-ui/icons/Business';
 import PersonIcon from '@material-ui/icons/Person';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import useAuth from '../../hooks/useAuth';
-import { User } from 'firebase';
-
 const drawerWidth = 240;
 
 const menuIcons = {
@@ -123,7 +120,6 @@ function Shell({ children }: Props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(false);
-  const user: ?User = useAuth();
 
   function handleDrawerOpen() {
     setOpen(true);
