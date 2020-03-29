@@ -1,17 +1,27 @@
 // @flow
 
-class Landlord extends Model {
-  id: string;
-  name: string;
-  email: string;
+import Model from './model';
 
-  constructor() {
-    super('landlords');
+import AddressModel, { type Address } from './address';
+
+export type Landlord = {
+  id: string,
+  name: string,
+  address: Address
+};
+
+class LandlordModel extends Model<Landlord> {
+  static get primaryKey(): string {
+    return 'id';
   }
 
-  addresses() {
-    return this.hasMany('address');
+  static get collection(): string {
+    return 'landlords';
+  }
+
+  address(): Promise<?AddressModel> {
+    return this.hasOne<Address, AddressModel>(AddressModel, 'address');
   }
 }
 
-export default Landlord;
+export default LandlordModel;

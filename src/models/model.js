@@ -17,9 +17,6 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-// registry of collection names to instantiable model types
-export const registry = new Map<string, any>();
-
 class Model<T> {
   collection: string;
 
@@ -37,7 +34,7 @@ class Model<T> {
     this.data = data;
   }
 
-  static async find(key: string): Promise<?Model<T>> {
+  static async find<R: Model<T>>(key: string): Promise<?R> {
     const data: T = await db
       .collection(this.constructor.collection)
       .doc(key)
@@ -50,16 +47,27 @@ class Model<T> {
         }
       });
 
+    if (!data) {
+      return null;
+    }
+
+    console.log(data);
+
+    // $FlowFixMe
     return new this(data);
   }
 
-  static async findMany(
+  static async findMany<R: Model<T>>(
     keyRef: string,
     value: string
-  ): Promise<?Array<Model<T>>> {
+  ): Promise<?Array<R>> {
     const data: Array<T> = await db
       .collection(this.constructor.collection)
       .where(keyRef, '==', value);
+
+    console.log(data);
+
+    // $FlowFixMe
     return data.map((item) => new this(item));
   }
 
@@ -67,14 +75,9 @@ class Model<T> {
    * collection: collection to search
    * key: property on this object that references the primary identifier in collection
    */
-  async hasOne<R>(collection: string, key: string): Promise<?Model<R>> {
-    const Model: ?any = registry.get(collection);
-
-    if (!Model) {
-      throw `Expected a Model to be registered for collection: ${collection}`;
-    }
-
-    return Model.find(this.data[key]);
+  async hasOne<Y, X: Model<Y>>(model: Class<X>, key: string): Promise<?X> {
+    // $FlowFixMe
+    return model.find<X>(this.data[key]);
   }
 
   /*
@@ -82,18 +85,13 @@ class Model<T> {
    * key: property on this object that references the primary identifier in collection
    * keyRef: property being referred to in collection
    */
-  async hasMany<R>(
-    collection: string,
+  async hasMany<Y, X: Model<Y>>(
+    model: Class<X>,
     key: string,
     keyRef: string
-  ): Promise<?Array<Model<R>>> {
-    const Model: ?any = registry.get(collection);
-
-    if (!Model) {
-      throw `Expected a Model to be registered for collection: ${collection}`;
-    }
-
-    return Model.findMany(keyRef, this.data[key]);
+  ): Promise<?Array<X>> {
+    // $FlowFixMe
+    return model.findMany<X>(keyRef, this.data[key]);
   }
 
   /*
@@ -101,18 +99,17 @@ class Model<T> {
    * key: value in this object that is being referred to in collection
    * keyRef: key in collection that is referencing key
    */
-  async belongsTo<R>(
-    collection: string,
+  async belongsTo<Y, X: Model<Y>>(
+    model: Class<X>,
     key: string,
     keyRef: string
-  ): Promise<?Model<R>> {
-    const Model: ?any = registry.get(collection);
+  ): Promise<?X> {
+    // $FlowFixMe
+    const models = await model.findMany<X>(keyRef, this.data[key]);
 
-    if (!Model) {
-      throw `Expected a Model to be registered for collection: ${collection}`;
+    if (!models) {
+      return null;
     }
-
-    const models = await Model.findMany(keyRef, this.data[key]);
 
     if (models.length > 1) {
       throw `Expected one reference for belongsTo`;
@@ -126,18 +123,13 @@ class Model<T> {
    * key: value in this object that is being referred to in collection
    * keyRef: key in collection that is referencing key
    */
-  async belongsToMany<R>(
-    collection: string,
+  async belongsToMany<Y, X: Model<Y>>(
+    model: Class<X>,
     key: string,
     keyRef: string
-  ): Promise<?Array<Model<R>>> {
-    const Model: ?any = registry.get(collection);
-
-    if (!Model) {
-      throw `Expected a Model to be registered for collection: ${collection}`;
-    }
-
-    return Model.findMany(keyRef, this.data[key]);
+  ): Promise<?Array<X>> {
+    // $FlowFixMe
+    return model.findMany<X>(keyRef, this.data[key]);
   }
 }
 

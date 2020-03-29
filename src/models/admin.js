@@ -2,7 +2,7 @@
 
 import Model from './model';
 
-type Admin = {
+export type Admin = {
   id: string,
   name: string,
   email: string
