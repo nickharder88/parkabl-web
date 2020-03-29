@@ -5,7 +5,6 @@ import Model from './model';
 import TenantModel, { type Tenant } from './tenant';
 
 export type Vehicle = {
-  id: string,
   make: string,
   model: string,
   licensePlatNum: string,
@@ -14,10 +13,6 @@ export type Vehicle = {
 };
 
 class VehicleModel extends Model<Vehicle> {
-  static get primaryKey(): string {
-    return 'id';
-  }
-
   static get collection(): string {
     return 'vehicles';
   }

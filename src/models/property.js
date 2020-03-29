@@ -6,16 +6,11 @@ import AddressModel, { type Address } from './address';
 import LandlordModel, { type Landlord } from './landlord';
 
 export type Property = {
-  id: string,
   address: Address,
   landlord: Landlord
 };
 
 class PropertyModel extends Model<Property> {
-  static get primaryKey(): string {
-    return 'id';
-  }
-
   static get collection(): string {
     return 'properties';
   }

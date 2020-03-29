@@ -5,7 +5,6 @@ import Model from './model';
 import CompanyModel, { type Company } from './company';
 
 export type Operator = {
-  id: string,
   name: string,
   email: string,
   phone: string,
@@ -13,10 +12,6 @@ export type Operator = {
 };
 
 class OperatorModel extends Model<Operator> {
-  static get primaryKey(): string {
-    return 'id';
-  }
-
   static get collection(): string {
     return 'operators';
   }

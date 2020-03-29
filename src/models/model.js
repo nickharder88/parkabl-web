@@ -1,74 +1,59 @@
 // @flow
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyAwyaBA5y0KaOvVzv2RqL4NXryw3DAQ4a4',
-  authDomain: 'parkabl.firebaseapp.com',
-  databaseURL: 'https://parkabl.firebaseio.com',
-  projectId: 'parkabl',
-  storageBucket: 'parkabl.appspot.com',
-  messagingSenderId: '921812638836',
-  appId: '1:921812638836:web:8d15f911efa9a2b6e38521',
-  measurementId: 'G-GKR6Q67PNC'
-};
-
-firebase.initializeApp(firebaseConfig);
-
+import firebase from '../firebase';
 const db = firebase.firestore();
 
 class Model<T> {
   collection: string;
 
+  id: string;
   data: T;
-
-  static get primaryKey(): string {
-    throw 'This method should be overridden';
-  }
 
   static get collection(): string {
     throw 'This method should be overridden';
   }
 
-  constructor(data: T) {
+  static get converter() {
+    return {
+      toFirestore(obj) {
+        return obj.data;
+      },
+      fromFirestore(snapshot, options) {
+        const data = snapshot.data(options);
+        return new this(snapshot.id, data);
+      }
+    };
+  }
+
+  constructor(id: string, data: T) {
+    this.id = id;
     this.data = data;
   }
 
-  static async find<R: Model<T>>(key: string): Promise<?R> {
-    const data: T = await db
+  static async find<R: Model<T>>(id: string): Promise<?R> {
+    const doc = await db
       .collection(this.constructor.collection)
-      .doc(key)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          return doc.data();
-        } else {
-          return null;
-        }
-      });
+      .doc(id)
+      .withConverter(this.converter)
+      .get();
 
-    if (!data) {
-      return null;
-    }
-
-    console.log(data);
-
-    // $FlowFixMe
-    return new this(data);
+    const found = doc.data();
+    console.log(found);
+    return found;
   }
 
   static async findMany<R: Model<T>>(
     keyRef: string,
     value: string
   ): Promise<?Array<R>> {
-    const data: Array<T> = await db
+    const querySnapshot = await db
       .collection(this.constructor.collection)
-      .where(keyRef, '==', value);
+      .where(keyRef, '==', value)
+      .withConverter(this.converter)
+      .get();
 
-    console.log(data);
-
-    // $FlowFixMe
-    return data.map((item) => new this(item));
+    const found = querySnapshot.docs.map((doc) => doc.data());
+    console.log(found);
+    return found;
   }
 
   /*

@@ -6,16 +6,11 @@ import PropertyModel, { type Property } from './property';
 import VehicleModel, { type Vehicle } from './vehicle';
 
 export type ParkingSpot = {
-  id: string,
   property: Property,
   vehicle: ?Vehicle
 };
 
 class ParkingSpotModel extends Model<ParkingSpot> {
-  static get primaryKey(): string {
-    return 'id';
-  }
-
   static get collection(): string {
     return 'parkingSpots';
   }
