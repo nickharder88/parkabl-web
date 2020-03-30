@@ -7,7 +7,7 @@ import TenantModel, { type Tenant } from './tenant';
 export type Vehicle = {
   make: string,
   model: string,
-  licensePlatNum: string,
+  licensePlateNum: string,
   state: string,
   tenant: Tenant
 };

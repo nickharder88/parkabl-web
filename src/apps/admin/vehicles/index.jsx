@@ -8,21 +8,22 @@ import TextField from '@material-ui/core/TextField';
 // data
 import Repository from '../../../repositories/repository';
 import TenantModel, { type Tenant } from '../../../models/tenant';
+import VehicleModel, { type Vehicle } from '../../../models/vehicle';
 
 // components
 import Table from '../../../components/table';
 
-function Tenants() {
+function List() {
   // pull columns into tenant model attribute. Dynamically generate page
 
-  const [repository] = useState<Repository<Tenant, TenantModel>>(
-    new Repository<Tenant, TenantModel>(TenantModel)
+  const [repository] = useState<Repository<Vehicle, VehicleModel>>(
+    new Repository<Vehicle, VehicleModel>(VehicleModel)
   );
 
   const [columns] = useState([
     {
-      title: 'Name',
-      field: 'name',
+      title: 'Make',
+      field: 'make',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -32,8 +33,8 @@ function Tenants() {
       )
     },
     {
-      title: 'Email',
-      field: 'email',
+      title: 'Model',
+      field: 'model',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -43,8 +44,30 @@ function Tenants() {
       )
     },
     {
-      title: 'Phone',
-      field: 'phone',
+      title: 'License',
+      field: 'licensePlateNum',
+      editComponent: (props) => (
+        <TextField
+          fullWidth
+          value={props.value || ''}
+          onChange={(e) => props.onChange(e.target.value)}
+        />
+      )
+    },
+    {
+      title: 'State',
+      field: 'state',
+      editComponent: (props) => (
+        <TextField
+          fullWidth
+          value={props.value || ''}
+          onChange={(e) => props.onChange(e.target.value)}
+        />
+      )
+    },
+    {
+      title: 'Tenant',
+      field: 'tenant',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -58,13 +81,13 @@ function Tenants() {
   return (
     <Box>
       <Table
-        title="Tenants"
+        title="Vehicles"
         repository={repository}
         columns={columns}
-        onNavigate={(id: string) => `/app/admin/tenants/${id}`}
+        onNavigate={(id: string) => `/app/admin/vehicles/${id}`}
       />
     </Box>
   );
 }
 
-export default Tenants;
+export default List;

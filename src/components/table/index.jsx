@@ -1,6 +1,7 @@
 // @flow
 
 import React, { forwardRef, useState, useEffect } from 'react';
+import { navigate } from 'gatsby';
 
 import MaterialTable from 'material-table';
 import Add from '@material-ui/icons/Add';
@@ -23,15 +24,25 @@ import Repository from '../../repositories/repository';
 import Model from '../../models/model';
 
 type Props<Y, X: Model<Y>> = {
+  title: string,
   repository: Repository<Y, X>,
-  columns: Array<any>
+  columns: Array<any>,
+  // Return URL to navigate to
+  onNavigate: (id: string) => string,
+  editable?: boolean
 };
 
-function Table<Y, X: Model<Y>>({ repository, columns }: Props<Y, X>) {
+function Table<Y, X: Model<Y>>({
+  title,
+  repository,
+  columns,
+  onNavigate,
+  editable
+}: Props<Y, X>) {
   const [data, setData] = useState<Array<Y>>([]);
 
   useEffect(() => {
-    repository.list().then((items: Array<X>) => {
+    const subscription = repository.list().subscribe((items: Array<X>) => {
       setData(
         items.map((item: X) => ({
           id: item.id,
@@ -39,13 +50,22 @@ function Table<Y, X: Model<Y>>({ repository, columns }: Props<Y, X>) {
         }))
       );
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [repository]);
+
+  function onRowClick(event: any, rowData: { id: string }) {
+    navigate(onNavigate(rowData.id));
+  }
 
   return (
     <MaterialTable
-      title="Tenants"
+      title={title}
       columns={columns}
       data={data}
+      onRowClick={onRowClick}
       icons={{
         Add: forwardRef((props, ref) => <Add {...props} ref={ref} />),
         Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -81,19 +101,26 @@ function Table<Y, X: Model<Y>>({ repository, columns }: Props<Y, X>) {
           <ViewColumn {...props} ref={ref} />
         ))
       }}
-      editable={{
-        onRowAdd: (newData: X) => repository.create(newData),
-        onRowUpdate: (newData, oldData) => {
-          const updated = {
-            ...newData
-          };
-          delete updated.id;
-          return repository.update(oldData.id, updated);
-        },
-        onRowDelete: (oldData: X) => repository.delete(oldData.id)
-      }}
+      editable={
+        editable && {
+          onRowAdd: (newData: Y) => repository.create(newData),
+          onRowUpdate: (newData, oldData) => {
+            const updated = {
+              ...newData
+            };
+            delete updated.id;
+            return repository.update(oldData.id, updated);
+          },
+          onRowDelete: (oldData: { id: string }) =>
+            repository.delete(oldData.id)
+        }
+      }
     />
   );
 }
+
+Table.defaultProps = {
+  editable: true
+};
 
 export default Table;

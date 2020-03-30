@@ -7,16 +7,16 @@ import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
-import TenantModel, { type Tenant } from '../../../models/tenant';
+import CompanyModel, { type Company } from '../../../models/company';
 
 // components
 import Table from '../../../components/table';
 
-function Tenants() {
+function List() {
   // pull columns into tenant model attribute. Dynamically generate page
 
-  const [repository] = useState<Repository<Tenant, TenantModel>>(
-    new Repository<Tenant, TenantModel>(TenantModel)
+  const [repository] = useState<Repository<Company, CompanyModel>>(
+    new Repository<Company, CompanyModel>(CompanyModel)
   );
 
   const [columns] = useState([
@@ -32,19 +32,8 @@ function Tenants() {
       )
     },
     {
-      title: 'Email',
-      field: 'email',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
-    },
-    {
-      title: 'Phone',
-      field: 'phone',
+      title: 'Address',
+      field: 'address',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -58,13 +47,13 @@ function Tenants() {
   return (
     <Box>
       <Table
-        title="Tenants"
+        title="Companies"
         repository={repository}
         columns={columns}
-        onNavigate={(id: string) => `/app/admin/tenants/${id}`}
+        onNavigate={(id: string) => `/app/admin/companies/${id}`}
       />
     </Box>
   );
 }
 
-export default Tenants;
+export default List;

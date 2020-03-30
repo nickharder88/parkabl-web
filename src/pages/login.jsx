@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 import validate from 'validate.js';
 import { navigate } from 'gatsby';
@@ -56,6 +56,14 @@ function Login() {
         console.log('error logging in');
       });
   }
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        navigate('/app/admin/dashboard');
+      }
+    });
+  }, []);
 
   return (
     <Box

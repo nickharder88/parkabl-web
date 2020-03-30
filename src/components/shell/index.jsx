@@ -24,8 +24,14 @@ import RvHookupIcon from '@material-ui/icons/RvHookup';
 import BusinessIcon from '@material-ui/icons/Business';
 import PersonIcon from '@material-ui/icons/Person';
 import MenuIcon from '@material-ui/icons/Menu';
+import RoomIcon from '@material-ui/icons/Room';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
+import HomeIcon from '@material-ui/icons/Home';
+import LocalParkingIcon from '@material-ui/icons/LocalParking';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
 
 import firebase from '../../firebase';
 import Link from '../Link';
@@ -34,9 +40,15 @@ const drawerWidth = 240;
 
 const menuIcons = {
   dashboard: DashboardIcon,
-  rv_hookup: RvHookupIcon,
+  room: RoomIcon,
+  supervisor_account: SupervisorAccountIcon,
+  business_center: BusinessCenterIcon,
   business: BusinessIcon,
-  person: PersonIcon
+  rv_hookup: RvHookupIcon,
+  local_parking: LocalParkingIcon,
+  home: HomeIcon,
+  person: PersonIcon,
+  drive_eta: DriveEtaIcon
 };
 
 const useStyles = makeStyles((theme) => ({

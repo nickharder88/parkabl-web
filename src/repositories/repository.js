@@ -1,5 +1,9 @@
+// @flow
+
 import Model from '../models/model';
 import firebase from '../firebase';
+
+import { Observable, Subject } from 'rxjs';
 
 const db = firebase.firestore();
 
@@ -10,12 +14,29 @@ class Repository<Y, X: Model<Y>> {
     this.model = model;
   }
 
-  list(): Promise<Array<X>> {
-    return db
-      .collection(this.model.collection)
+  get(id: string): Observable<X> {
+    const subject = new Subject<X>();
+
+    db.collection(this.model.collection)
       .withConverter(this.model.converter)
-      .get()
-      .then((querySnapshot) => querySnapshot.docs.map((doc) => doc.data()));
+      .doc(id)
+      .onSnapshot((snapshot) => {
+        subject.next(snapshot.data());
+      });
+
+    return subject.asObservable();
+  }
+
+  list(): Observable<Array<X>> {
+    const subject = new Subject<Array<X>>([]);
+
+    db.collection(this.model.collection)
+      .withConverter(this.model.converter)
+      .onSnapshot((querySnapshot) => {
+        subject.next(querySnapshot.docs.map((doc) => doc.data()));
+      });
+
+    return subject.asObservable();
   }
 
   create(data: Y): Promise<X> {

@@ -6,6 +6,7 @@ import AddressModel, { type Address } from './address';
 
 export type Landlord = {
   name: string,
+  email: string,
   address: Address
 };
 

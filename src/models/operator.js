@@ -21,4 +21,4 @@ class OperatorModel extends Model<Operator> {
   }
 }
 
-export default CompanyModel;
+export default OperatorModel;

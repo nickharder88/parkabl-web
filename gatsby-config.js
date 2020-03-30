@@ -13,9 +13,14 @@ module.exports = {
             icon: 'dashboard'
           },
           {
-            key: 'operators',
-            name: 'Operators',
-            icon: 'rv_hookup'
+            key: 'admins',
+            name: 'Admins',
+            icon: 'supervisor_account'
+          },
+          {
+            key: 'companies',
+            name: 'Companies',
+            icon: 'business_center'
           },
           {
             key: 'landlords',
@@ -23,9 +28,24 @@ module.exports = {
             icon: 'business'
           },
           {
+            key: 'operators',
+            name: 'Operators',
+            icon: 'rv_hookup'
+          },
+          {
+            key: 'properties',
+            name: 'Properties',
+            icon: 'home'
+          },
+          {
             key: 'tenants',
             name: 'Tenants',
             icon: 'person'
+          },
+          {
+            key: 'vehicles',
+            name: 'Vehicles',
+            icon: 'drive_eta'
           }
         ]
       },
