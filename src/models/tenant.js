@@ -17,7 +17,7 @@ class TenantModel extends Model<Tenant> {
   }
 
   property(): Promise<?PropertyModel> {
-    return this.hasOne<Property, PropertyModel>(PropertyModel, 'address');
+    return this.hasOne<Property, PropertyModel>(PropertyModel, 'property');
   }
 }
 

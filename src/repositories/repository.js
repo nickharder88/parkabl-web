@@ -1,7 +1,7 @@
-import firebase from '../firebase';
-const db = firebase.firestore();
-
 import Model from '../models/model';
+import firebase from '../firebase';
+
+const db = firebase.firestore();
 
 class Repository<Y, X: Model<Y>> {
   model: Class<X>;

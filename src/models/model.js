@@ -13,13 +13,14 @@ class Model<T> {
   }
 
   static get converter() {
+    const model = this;
     return {
       toFirestore(obj) {
         return obj.data;
       },
       fromFirestore(snapshot, options) {
         const data = snapshot.data(options);
-        return new this(snapshot.id, data);
+        return new model(snapshot.id, data);
       }
     };
   }
@@ -31,14 +32,11 @@ class Model<T> {
 
   static async find<R: Model<T>>(id: string): Promise<?R> {
     const doc = await db
-      .collection(this.constructor.collection)
+      .collection(this.collection)
       .doc(id)
       .withConverter(this.converter)
       .get();
-
-    const found = doc.data();
-    console.log(found);
-    return found;
+    return doc.data();
   }
 
   static async findMany<R: Model<T>>(
@@ -46,14 +44,12 @@ class Model<T> {
     value: string
   ): Promise<?Array<R>> {
     const querySnapshot = await db
-      .collection(this.constructor.collection)
+      .collection(this.collection)
       .where(keyRef, '==', value)
       .withConverter(this.converter)
       .get();
 
-    const found = querySnapshot.docs.map((doc) => doc.data());
-    console.log(found);
-    return found;
+    return querySnapshot.docs.map((doc) => doc.data());
   }
 
   /*
