@@ -7,11 +7,24 @@ import { Observable, Subject } from 'rxjs';
 
 const db = firebase.firestore();
 
+export type Hooks<Y> = {
+  onCreate?: (data: Y) => Promise<Y>,
+  onUpdate?: (data: Y) => Promise<Y>,
+  onWrite?: (data: Y) => Promise<Y>
+};
+
+export type RepositoryOptions<Y> = {
+  hooks?: Hooks<Y>
+};
+
 class Repository<Y, X: Model<Y>> {
   model: Class<X>;
 
-  constructor(model: Class<X>) {
+  options: ?RepositoryOptions<Y>;
+
+  constructor(model: Class<X>, options?: RepositoryOptions<Y>) {
     this.model = model;
+    this.options = options;
   }
 
   get(id: string): Observable<X> {
@@ -39,10 +52,13 @@ class Repository<Y, X: Model<Y>> {
     return subject.asObservable();
   }
 
-  create(data: Y): Promise<X> {
+  // trying to trigger on create/update to create geohash
+  async create(data: Y): Promise<X> {
+    const newData = await this.onCreate(data);
+
     return db
       .collection(this.model.collection)
-      .add(data)
+      .add(newData)
       .then((docRef) =>
         db
           .collection(this.model.collection)
@@ -52,11 +68,13 @@ class Repository<Y, X: Model<Y>> {
       );
   }
 
-  update(id: string, data: Y): Promise<X> {
+  async update(id: string, data: Y): Promise<X> {
+    const newData = await this.onUpdate(data);
+
     return db
       .collection(this.model.collection)
       .doc(id)
-      .set(data)
+      .set(newData)
       .then(() =>
         db
           .collection(this.model.collection)
@@ -69,6 +87,42 @@ class Repository<Y, X: Model<Y>> {
 
   delete(key: string): Promise<void> {
     return db.collection(this.model.collection).doc(key).delete();
+  }
+
+  // HOOKS
+  // called before sending to database
+
+  // called when item is created or updated
+  async onWrite(data: Y): Promise<Y> {
+    console.log('onWrite');
+
+    if (this.options && this.options.hooks && this.options.hooks.onWrite) {
+      return await this.options.hooks.onWrite(data);
+    }
+
+    return data;
+  }
+
+  // called when item is created
+  async onCreate(data: Y): Promise<Y> {
+    console.log('onCreate');
+    let newData = data;
+
+    if (this.options && this.options.hooks && this.options.hooks.onCreate) {
+      newData = await this.options.hooks.onCreate(data);
+    }
+
+    return this.onWrite(newData);
+  }
+
+  async onUpdate(data: Y): Promise<Y> {
+    console.log('onUpdate');
+    let newData = data;
+    if (this.options && this.options.hooks && this.options.hooks.onUpdate) {
+      newData = await this.options.hooks.onUpdate(data);
+    }
+
+    return this.onWrite(newData);
   }
 }
 

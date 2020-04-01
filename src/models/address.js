@@ -9,7 +9,8 @@ export type Address = {
   city: string,
   state: string,
   country: string,
-  postal: string
+  postal: string,
+  geohash: string
 };
 
 class AddressModel extends Model<Address> {

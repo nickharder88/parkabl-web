@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useEffect } from 'react';
+import React, { type ChildrenArray, useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 import lodash from 'lodash';
 
@@ -35,14 +35,16 @@ type Props<X> = {
   id: string,
   title: string,
   model: Class<Model<X>>,
-  relationships: Array<Relationship>
+  relationships: Array<Relationship>,
+  children?: ChildrenArray<any>
 };
 
 function Details<Y, X: Model<Y>>({
   id,
   title,
   model,
-  relationships
+  relationships,
+  children
 }: Props<X>) {
   const [data, setData] = useState<?X>();
   // $FlowFixMe
@@ -167,6 +169,12 @@ function Details<Y, X: Model<Y>>({
           </Grid>
         );
       })}
+      {Boolean(children && Array.isArray(children)) &&
+        children.map((child) => (
+          <Grid key={child.key} item xs={12} sm={6} xl={4}>
+            {child}
+          </Grid>
+        ))}
     </Grid>
   );
 }

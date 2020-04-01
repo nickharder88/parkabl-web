@@ -1,6 +1,8 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Geocode from 'react-geocode';
+import ngeohash from 'ngeohash';
 
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
@@ -12,10 +14,60 @@ import AddressModel, { type Address } from '../../../models/address';
 // components
 import Table from '../../../components/table';
 
+Geocode.setApiKey(process.env.GCLOUD_API_KEY);
+Geocode.setLanguage('en');
+Geocode.enableDebug();
+
 function List() {
-  const [repository] = useState<Repository<Address, AddressModel>>(
-    new Repository<Address, AddressModel>(AddressModel)
-  );
+  // prettier-ignore
+  const [repository, setRepository] = useState<?Repository<Address, AddressModel>>();
+
+  useEffect(() => {
+    setRepository(
+      new Repository<Address, AddressModel>(AddressModel, {
+        hooks: {
+          onWrite: async (data: Address): Promise<Address> => {
+            // convert address to coordinates
+            const responseGeocode = await new Promise((resolve, reject) => {
+              Geocode.fromAddress(data).then(
+                (response) => {
+                  resolve(response);
+                },
+                (error) => {
+                  reject(error);
+                }
+              );
+            });
+
+            let lat;
+            let lng;
+            if (
+              responseGeocode &&
+              responseGeocode.status === 'OK' &&
+              responseGeocode.results &&
+              responseGeocode.results[0] &&
+              responseGeocode.results[0].geometry &&
+              responseGeocode.results[0].geometry.location
+            ) {
+              lat = responseGeocode.results[0].geometry.location.lat;
+              lng = responseGeocode.results[0].geometry.location.lng;
+            } else {
+              throw new Error('Unexpected format of geocode response');
+            }
+
+            // convert coordinates to geohash
+            const geohash = ngeohash.encode(lat, lng);
+
+            // return object
+            return {
+              ...data,
+              geohash
+            };
+          }
+        }
+      })
+    );
+  }, []);
 
   const [columns] = useState([
     {
@@ -99,12 +151,14 @@ function List() {
 
   return (
     <Box>
-      <Table
-        title="Addresses"
-        repository={repository}
-        columns={columns}
-        onNavigate={(id: string) => `/app/admin/addresses/${id}`}
-      />
+      {repository && (
+        <Table
+          title="Addresses"
+          repository={repository}
+          columns={columns}
+          onNavigate={(id: string) => `/app/admin/addresses/${id}`}
+        />
+      )}
     </Box>
   );
 }

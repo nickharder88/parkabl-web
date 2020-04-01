@@ -12,8 +12,6 @@ type Props = {
 const relationships = [];
 
 function Details({ id }: Props) {
-  console.log(id);
-
   return (
     <GenericDetails
       id={id}

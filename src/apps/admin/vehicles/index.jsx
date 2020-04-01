@@ -13,8 +13,6 @@ import VehicleModel, { type Vehicle } from '../../../models/vehicle';
 import Table from '../../../components/table';
 
 function List() {
-  // pull columns into tenant model attribute. Dynamically generate page
-
   const [repository] = useState<Repository<Vehicle, VehicleModel>>(
     new Repository<Vehicle, VehicleModel>(VehicleModel)
   );
