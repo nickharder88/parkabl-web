@@ -13,6 +13,11 @@ module.exports = {
             icon: 'dashboard'
           },
           {
+            key: 'addresses',
+            name: 'Addresses',
+            icon: 'my_location'
+          },
+          {
             key: 'admins',
             name: 'Admins',
             icon: 'supervisor_account'

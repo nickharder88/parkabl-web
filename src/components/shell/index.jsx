@@ -32,6 +32,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
+import MyLocation from '@material-ui/icons/MyLocation';
 
 import firebase from '../../firebase';
 import Link from '../Link';
@@ -48,6 +49,7 @@ const menuIcons = {
   local_parking: LocalParkingIcon,
   home: HomeIcon,
   person: PersonIcon,
+  my_location: MyLocation,
   drive_eta: DriveEtaIcon
 };
 

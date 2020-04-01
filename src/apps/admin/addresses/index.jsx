@@ -7,22 +7,20 @@ import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
-import VehicleModel, { type Vehicle } from '../../../models/vehicle';
+import AddressModel, { type Address } from '../../../models/address';
 
 // components
 import Table from '../../../components/table';
 
 function List() {
-  // pull columns into tenant model attribute. Dynamically generate page
-
-  const [repository] = useState<Repository<Vehicle, VehicleModel>>(
-    new Repository<Vehicle, VehicleModel>(VehicleModel)
+  const [repository] = useState<Repository<Address, AddressModel>>(
+    new Repository<Address, AddressModel>(AddressModel)
   );
 
   const [columns] = useState([
     {
-      title: 'Make',
-      field: 'make',
+      title: 'House Num',
+      field: 'houseNum',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -32,8 +30,8 @@ function List() {
       )
     },
     {
-      title: 'Model',
-      field: 'model',
+      title: 'Apartment Num',
+      field: 'apartmentNum',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -43,8 +41,19 @@ function List() {
       )
     },
     {
-      title: 'License',
-      field: 'licensePlateNum',
+      title: 'Street',
+      field: 'street',
+      editComponent: (props) => (
+        <TextField
+          fullWidth
+          value={props.value || ''}
+          onChange={(e) => props.onChange(e.target.value)}
+        />
+      )
+    },
+    {
+      title: 'City',
+      field: 'city',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -65,8 +74,19 @@ function List() {
       )
     },
     {
-      title: 'Tenant',
-      field: 'tenant',
+      title: 'Country',
+      field: 'country',
+      editComponent: (props) => (
+        <TextField
+          fullWidth
+          value={props.value || ''}
+          onChange={(e) => props.onChange(e.target.value)}
+        />
+      )
+    },
+    {
+      title: 'Postal',
+      field: 'postal',
       editComponent: (props) => (
         <TextField
           fullWidth
@@ -80,10 +100,10 @@ function List() {
   return (
     <Box>
       <Table
-        title="Vehicles"
+        title="Addresses"
         repository={repository}
         columns={columns}
-        onNavigate={(id: string) => `/app/admin/vehicles/${id}`}
+        onNavigate={(id: string) => `/app/admin/addresses/${id}`}
       />
     </Box>
   );
