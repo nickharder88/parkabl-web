@@ -27,9 +27,38 @@ function List() {
       new Repository<Address, AddressModel>(AddressModel, {
         hooks: {
           onWrite: async (data: Address): Promise<Address> => {
+            const address = [];
+            if (data.houseNum) {
+              if (data.street) {
+                address.push(`${data.houseNum} ${data.street}`);
+              }
+            } else if (data.apartmentNum) {
+              if (data.street) {
+                address.push(`${data.apartmentNum} ${data.street}`);
+              }
+            } else if (data.street) {
+              address.push(data.street);
+            }
+
+            if (data.city) {
+              address.push(data.city);
+            }
+
+            if (data.state) {
+              if (data.postal) {
+                address.push(`${data.state} ${data.postal}`);
+              } else {
+                address.push(data.state);
+              }
+            }
+
+            if (data.country) {
+              address.push(data.country);
+            }
+
             // convert address to coordinates
             const responseGeocode = await new Promise((resolve, reject) => {
-              Geocode.fromAddress(data).then(
+              Geocode.fromAddress(address.join(', ')).then(
                 (response) => {
                   resolve(response);
                 },
