@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
@@ -12,6 +11,8 @@ import CompanyModel from '../../../models/company';
 
 // components
 import Table from '../../../components/table';
+import TextField from '../../../components/editComponents/textField';
+import SelectModel from '../../../components/editComponents/selectModel';
 
 function List() {
   const [repository] = useState<Repository<Operator, OperatorModel>>(
@@ -22,45 +23,27 @@ function List() {
     {
       title: 'Name',
       field: 'name',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Email',
       field: 'email',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Phone',
       field: 'phone',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Company',
       field: 'company',
       model: CompanyModel,
       editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
+        <SelectModel
+          model={CompanyModel}
+          value={props.value}
+          onChange={props.onChange}
         />
       )
     }

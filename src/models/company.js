@@ -14,8 +14,8 @@ class CompanyModel extends Model<Company> {
     return 'companies';
   }
 
-  toString(): string {
-    return this.data.name;
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve(this.data.name);
   }
 
   address(): Promise<?AddressModel> {

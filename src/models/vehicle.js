@@ -17,8 +17,8 @@ class VehicleModel extends Model<Vehicle> {
     return 'vehicles';
   }
 
-  toString(): string {
-    return this.data.licensePlateNum;
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve(this.data.licensePlateNum);
   }
 
   tenant(): Promise<?TenantModel> {

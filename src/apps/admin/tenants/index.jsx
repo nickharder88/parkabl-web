@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
@@ -11,6 +10,7 @@ import TenantModel, { type Tenant } from '../../../models/tenant';
 
 // components
 import Table from '../../../components/table';
+import TextField from '../../../components/editComponents/textField';
 
 function Tenants() {
   const [repository] = useState<Repository<Tenant, TenantModel>>(
@@ -21,35 +21,17 @@ function Tenants() {
     {
       title: 'Name',
       field: 'name',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Email',
       field: 'email',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Phone',
       field: 'phone',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     }
   ]);
 

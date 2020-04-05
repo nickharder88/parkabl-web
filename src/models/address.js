@@ -14,12 +14,11 @@ export type Address = {
 };
 
 class AddressModel extends Model<Address> {
-
   static get collection(): string {
     return 'addresses';
   }
 
-  toString(): string {
+  async toStringAsync(): Promise<string> {
     const address = [];
     if (this.data.houseNum) {
       if (this.data.street) {
@@ -49,7 +48,7 @@ class AddressModel extends Model<Address> {
       address.push(this.data.country);
     }
 
-    return address.join(', ');
+    return Promise.resolve(address.join(', '));
   }
 }
 

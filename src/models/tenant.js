@@ -16,8 +16,8 @@ class TenantModel extends Model<Tenant> {
     return 'tenants';
   }
 
-  toString(): string {
-    return this.data.name;
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve(this.data.name);
   }
 
   property(): Promise<?PropertyModel> {

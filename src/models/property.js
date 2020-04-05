@@ -15,6 +15,14 @@ class PropertyModel extends Model<Property> {
     return 'properties';
   }
 
+  async toStringAsync(): Promise<string> {
+    const address: ?AddressModel = await this.address();
+    if (!address) {
+      return '';
+    }
+    return address.toStringAsync();
+  }
+
   address(): Promise<?AddressModel> {
     return this.hasOne<Address, AddressModel>(AddressModel, 'address');
   }

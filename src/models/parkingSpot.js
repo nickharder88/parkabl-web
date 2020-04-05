@@ -15,6 +15,10 @@ class ParkingSpotModel extends Model<ParkingSpot> {
     return 'parkingSpots';
   }
 
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve('');
+  }
+
   property(): Promise<?PropertyModel> {
     return this.hasOne<Property, PropertyModel>(PropertyModel, 'property');
   }

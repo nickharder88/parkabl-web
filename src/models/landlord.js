@@ -7,6 +7,7 @@ import AddressModel, { type Address } from './address';
 export type Landlord = {
   name: string,
   email: string,
+  phone: string,
   address: Address
 };
 
@@ -15,8 +16,8 @@ class LandlordModel extends Model<Landlord> {
     return 'landlords';
   }
 
-  toString(): string {
-    return this.data.name;
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve(this.data.name);
   }
 
   address(): Promise<?AddressModel> {

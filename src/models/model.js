@@ -52,6 +52,10 @@ class Model<T> {
     return querySnapshot.docs.map((doc) => doc.data());
   }
 
+  async toStringAsync(): Promise<string> {
+    throw 'Not Implemented';
+  }
+
   /*
    * collection: collection to search
    * key: property on this object that references the primary identifier in collection

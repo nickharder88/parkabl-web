@@ -5,7 +5,6 @@ import Geocode from 'react-geocode';
 import ngeohash from 'ngeohash';
 
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
@@ -13,6 +12,7 @@ import AddressModel, { type Address } from '../../../models/address';
 
 // components
 import Table from '../../../components/table';
+import TextField from '../../../components/editComponents/textField';
 
 Geocode.setApiKey(process.env.GCLOUD_API_KEY);
 Geocode.setLanguage('en');
@@ -102,79 +102,37 @@ function List() {
     {
       title: 'House Num',
       field: 'houseNum',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Apartment Num',
       field: 'apartmentNum',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Street',
       field: 'street',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'City',
       field: 'city',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'State',
       field: 'state',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Country',
       field: 'country',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Postal',
       field: 'postal',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     }
   ]);
 

@@ -25,6 +25,7 @@ export type RelationshipHasOne = {
   // field on this object
   field: string,
   title: string,
+  value?: ?string,
   model: Class<Model<any>>,
   onNavigate: (id: string) => string
 };
@@ -57,6 +58,7 @@ function Details<Y, X: Model<Y>>({
   children
 }: Props<X>) {
   const [data, setData] = useState<?X>();
+  const [hasOneValues, setHasOneValues] = useState();
   // $FlowFixMe
   const [repository] = useState<Repository<Y, X>>(
     // $FlowFixMe
@@ -69,6 +71,25 @@ function Details<Y, X: Model<Y>>({
       subscription.unsubscribe();
     };
   }, [repository, id]);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    if (hasOne && hasOne.length > 0) {
+      Promise.all(
+        hasOne.map(async (item) => {
+          const found = await item.model.find(data.data[item.field]);
+          const value = await found.toStringAsync();
+          return {
+            ...item,
+            value
+          };
+        })
+      ).then(setHasOneValues);
+    }
+  }, [data, hasOne]);
 
   if (!data) {
     return (
@@ -101,7 +122,7 @@ function Details<Y, X: Model<Y>>({
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
+      <Grid item xs={12} sm={6} lg={4}>
         <Card>
           <CardHeader title={title} />
           <CardContent>
@@ -126,11 +147,11 @@ function Details<Y, X: Model<Y>>({
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        {Boolean(hasOne && hasOne.length > 0) && (
+      <Grid item xs={12} sm={6} lg={4}>
+        {Boolean(hasOneValues && hasOneValues.length > 0) && (
           <Card>
             <CardContent>
-              {hasOne.map((item) => {
+              {hasOneValues.map((item) => {
                 return (
                   <React.Fragment key={item.field}>
                     <Box
@@ -139,9 +160,17 @@ function Details<Y, X: Model<Y>>({
                       alignItems="center"
                       justifyContent="space-between"
                     >
-                      <Typography variant="subtitle2">
-                        {lodash.upperFirst(lodash.lowerCase(item.field))}
-                      </Typography>
+                      <Box
+                        display="flex"
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        flexDirection="column"
+                      >
+                        <Typography variant="caption">
+                          {lodash.upperFirst(lodash.lowerCase(item.field))}
+                        </Typography>
+                        {item.value && <Typography>{item.value}</Typography>}
+                      </Box>
                       <IconButton
                         // $FlowFixMe
                         onClick={() => {

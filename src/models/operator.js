@@ -16,8 +16,8 @@ class OperatorModel extends Model<Operator> {
     return 'operators';
   }
 
-  toString(): string {
-    return this.data.name;
+  async toStringAsync(): Promise<string> {
+    return Promise.resolve(this.data.name);
   }
 
   company(): Promise<?CompanyModel> {

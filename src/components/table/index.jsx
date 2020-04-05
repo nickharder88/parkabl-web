@@ -59,7 +59,8 @@ function Table<Y, X: Model<Y>>({
               }
 
               const found = await column.model.find(item.data[column.field]);
-              item.data[column.field] = found.toString();
+              const value = await found.toStringAsync();
+              item.data[column.field] = value;
             })
           );
 

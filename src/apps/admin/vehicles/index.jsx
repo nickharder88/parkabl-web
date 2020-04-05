@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
@@ -12,6 +11,8 @@ import TenantModel from '../../../models/tenant';
 
 // components
 import Table from '../../../components/table';
+import TextField from '../../../components/editComponents/textField';
+import SelectModel from '../../../components/editComponents/selectModel';
 
 function List() {
   const [repository] = useState<Repository<Vehicle, VehicleModel>>(
@@ -22,56 +23,32 @@ function List() {
     {
       title: 'Make',
       field: 'make',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Model',
       field: 'model',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'License',
       field: 'licensePlateNum',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'State',
       field: 'state',
-      editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
-        />
-      )
+      editComponent: TextField
     },
     {
       title: 'Tenant',
       field: 'tenant',
       model: TenantModel,
       editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
+        <SelectModel
+          model={TenantModel}
+          value={props.value}
+          onChange={props.onChange}
         />
       )
     }

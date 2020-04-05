@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
 
 // data
 import Repository from '../../../repositories/repository';
@@ -13,6 +12,7 @@ import LandlordModel from '../../../models/landlord';
 
 // components
 import Table from '../../../components/table';
+import SelectModel from '../../../components/editComponents/selectModel';
 
 function List() {
   const [repository] = useState<Repository<Property, PropertyModel>>(
@@ -25,10 +25,10 @@ function List() {
       field: 'address',
       model: AddressModel,
       editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
+        <SelectModel
+          model={AddressModel}
+          value={props.value}
+          onChange={props.onChange}
         />
       )
     },
@@ -37,10 +37,10 @@ function List() {
       field: 'landlord',
       model: LandlordModel,
       editComponent: (props) => (
-        <TextField
-          fullWidth
-          value={props.value || ''}
-          onChange={(e) => props.onChange(e.target.value)}
+        <SelectModel
+          model={LandlordModel}
+          value={props.value}
+          onChange={props.onChange}
         />
       )
     }
