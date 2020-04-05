@@ -91,11 +91,8 @@ class Repository<Y, X: Model<Y>> {
 
   // HOOKS
   // called before sending to database
-
   // called when item is created or updated
   async onWrite(data: Y): Promise<Y> {
-    console.log('onWrite');
-
     if (this.options && this.options.hooks && this.options.hooks.onWrite) {
       return await this.options.hooks.onWrite(data);
     }
@@ -105,7 +102,6 @@ class Repository<Y, X: Model<Y>> {
 
   // called when item is created
   async onCreate(data: Y): Promise<Y> {
-    console.log('onCreate');
     let newData = data;
 
     if (this.options && this.options.hooks && this.options.hooks.onCreate) {
@@ -116,7 +112,6 @@ class Repository<Y, X: Model<Y>> {
   }
 
   async onUpdate(data: Y): Promise<Y> {
-    console.log('onUpdate');
     let newData = data;
     if (this.options && this.options.hooks && this.options.hooks.onUpdate) {
       newData = await this.options.hooks.onUpdate(data);

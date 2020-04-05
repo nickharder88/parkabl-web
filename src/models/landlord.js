@@ -15,6 +15,10 @@ class LandlordModel extends Model<Landlord> {
     return 'landlords';
   }
 
+  toString(): string {
+    return this.data.name;
+  }
+
   address(): Promise<?AddressModel> {
     return this.hasOne<Address, AddressModel>(AddressModel, 'address');
   }

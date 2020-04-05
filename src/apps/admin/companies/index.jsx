@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 // data
 import Repository from '../../../repositories/repository';
 import CompanyModel, { type Company } from '../../../models/company';
+import AddressModel from '../../../models/address';
 
 // components
 import Table from '../../../components/table';
@@ -34,6 +35,7 @@ function List() {
     {
       title: 'Address',
       field: 'address',
+      model: AddressModel,
       editComponent: (props) => (
         <TextField
           fullWidth

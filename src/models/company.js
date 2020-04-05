@@ -14,6 +14,10 @@ class CompanyModel extends Model<Company> {
     return 'companies';
   }
 
+  toString(): string {
+    return this.data.name;
+  }
+
   address(): Promise<?AddressModel> {
     return this.hasOne<Address, AddressModel>(AddressModel, 'address');
   }

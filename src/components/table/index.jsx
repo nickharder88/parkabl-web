@@ -43,12 +43,29 @@ function Table<Y, X: Model<Y>>({
 
   useEffect(() => {
     const subscription = repository.list().subscribe((items: Array<X>) => {
-      setData(
-        items.map((item: X) => ({
-          id: item.id,
-          ...item.data
-        }))
-      );
+      Promise.all(
+        items.map(async (item: X) => {
+          await Promise.all(
+            columns.map(async (column) => {
+              if (!column.model) {
+                return;
+              }
+
+              const found = await column.model.find(item.data[column.field]);
+              item.data[column.field] = found.toString();
+            })
+          );
+
+          return item;
+        })
+      ).then((items: Array<X>) => {
+        setData(
+          items.map((item) => ({
+            id: item.id,
+            ...item.data
+          }))
+        );
+      });
     });
 
     return () => {

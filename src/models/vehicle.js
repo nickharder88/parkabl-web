@@ -17,6 +17,10 @@ class VehicleModel extends Model<Vehicle> {
     return 'vehicles';
   }
 
+  toString(): string {
+    return this.data.licensePlateNum;
+  }
+
   tenant(): Promise<?TenantModel> {
     return this.hasOne<Tenant, TenantModel>(TenantModel, 'tenant');
   }

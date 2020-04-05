@@ -16,6 +16,10 @@ class OperatorModel extends Model<Operator> {
     return 'operators';
   }
 
+  toString(): string {
+    return this.data.name;
+  }
+
   company(): Promise<?CompanyModel> {
     return this.hasOne<Company, CompanyModel>(CompanyModel, 'company');
   }
