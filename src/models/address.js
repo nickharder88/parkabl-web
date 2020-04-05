@@ -14,6 +14,7 @@ export type Address = {
 };
 
 class AddressModel extends Model<Address> {
+
   static get collection(): string {
     return 'addresses';
   }

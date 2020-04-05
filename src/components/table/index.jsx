@@ -1,6 +1,6 @@
 // @flow
 
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { type Node, forwardRef, useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 
 import MaterialTable from 'material-table';
@@ -23,10 +23,17 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import Repository from '../../repositories/repository';
 import Model from '../../models/model';
 
+export type Column = {
+  title: string,
+  field: string,
+  model?: Class<Model<any>>,
+  editComponent?: (props: any) => Node
+};
+
 type Props<Y, X: Model<Y>> = {
   title: string,
   repository: Repository<Y, X>,
-  columns: Array<any>,
+  columns: Array<Column>,
   // Return URL to navigate to
   onNavigate: (id: string) => string,
   editable?: boolean

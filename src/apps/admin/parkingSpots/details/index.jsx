@@ -3,7 +3,6 @@
 import React from 'react';
 
 import GenericDetails from '../../../../components/details';
-import TenantModel from '../../../../models/tenant';
 import PropertyModel from '../../../../models/property';
 import VehicleModel from '../../../../models/vehicle';
 import ParkingSpotModel from '../../../../models/parkingSpot';
@@ -12,31 +11,19 @@ type Props = {
   id: string
 };
 
-const relationships = [
+const hasOne = [
   {
-    key: 'property',
-    type: 'hasMany',
-    title: 'Properties',
+    field: 'property',
+    title: 'Property',
     model: PropertyModel,
-    columns: [
-      {
-        title: 'Address',
-        field: 'address'
-      },
-      {
-        title: 'Landlord',
-        field: 'landlord'
-      }
-    ],
     onNavigate: (id: string) => `/app/admin/properties/${id}`
   },
   {
-    key: 'vehicle',
-    type: 'hasOne',
+    field: 'vehicle',
     title: 'Vehicle',
     model: VehicleModel,
     onNavigate: (id: string) => `/app/admin/vehicles/${id}`
-  }
+  },
 ];
 
 function Details({ id }: Props) {
@@ -45,7 +32,7 @@ function Details({ id }: Props) {
       id={id}
       title="Parking Spot"
       model={ParkingSpotModel}
-      relationships={relationships}
+      hasOne={hasOne}
     />
   );
 }

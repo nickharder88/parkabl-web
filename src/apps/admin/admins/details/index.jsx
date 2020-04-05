@@ -9,17 +9,8 @@ type Props = {
   id: string
 };
 
-const relationships = [];
-
 function Details({ id }: Props) {
-  return (
-    <GenericDetails
-      id={id}
-      title="Admin"
-      model={AdminModel}
-      relationships={relationships}
-    />
-  );
+  return <GenericDetails id={id} title="Admin" model={AdminModel} />;
 }
 
 export default Details;

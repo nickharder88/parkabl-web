@@ -5,18 +5,35 @@ import React from 'react';
 import GenericDetails from '../../../../components/details';
 import LandlordModel from '../../../../models/landlord';
 import AddressModel from '../../../../models/address';
+import PropertyModel from '../../../../models/property';
 
 type Props = {
   id: string
 };
 
-const relationships = [
+const hasOne = [
   {
-    key: 'address',
-    type: 'hasOne',
+    field: 'address',
     title: 'Addresses',
     model: AddressModel,
     onNavigate: (id: string) => `/app/admin/addresses/${id}`
+  }
+];
+
+const hasMany = [
+  {
+    key: 'properties',
+    field: 'landlord',
+    title: 'Properties',
+    model: PropertyModel,
+    columns: [
+      {
+        title: 'Address',
+        field: 'address',
+        model: AddressModel
+      }
+    ],
+    onNavigate: (id: string) => `/app/admin/properties/${id}`
   }
 ];
 
@@ -26,7 +43,8 @@ function Details({ id }: Props) {
       id={id}
       title="Landlord"
       model={LandlordModel}
-      relationships={relationships}
+      hasOne={hasOne}
+      hasMany={hasMany}
     />
   );
 }

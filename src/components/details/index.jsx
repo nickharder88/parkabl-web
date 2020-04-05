@@ -5,7 +5,6 @@ import { navigate } from 'gatsby';
 import lodash from 'lodash';
 
 import Box from '@material-ui/core/Box';
-import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -20,30 +19,41 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Repository from '../../repositories/repository';
 import Model from '../../models/model';
 
-import Table from '../../components/table';
+import Table, { type Column } from '../../components/table';
 
-export type Relationship = {
-  key: string,
-  type: 'hasOne' | 'hasMany',
+export type RelationshipHasOne = {
+  // field on this object
+  field: string,
   title: string,
   model: Class<Model<any>>,
-  onNavigate: (id: string) => string,
-  columns?: Array<any>
+  onNavigate: (id: string) => string
+};
+
+export type RelationshipHasMany = {
+  key: string,
+  // field on other object
+  field: string,
+  title: string,
+  model: Class<Model<any>>,
+  columns: Array<Column>,
+  onNavigate: (id: string) => string
 };
 
 type Props<X> = {
   id: string,
   title: string,
-  model: Class<Model<X>>,
-  relationships: Array<Relationship>,
-  children?: ChildrenArray<any>
+  model: Class<X>,
+  hasOne?: ?Array<RelationshipHasOne>,
+  hasMany?: ?Array<RelationshipHasMany>,
+  children?: ?ChildrenArray<any>
 };
 
 function Details<Y, X: Model<Y>>({
   id,
   title,
   model,
-  relationships,
+  hasOne,
+  hasMany,
   children
 }: Props<X>) {
   const [data, setData] = useState<?X>();
@@ -75,18 +85,19 @@ function Details<Y, X: Model<Y>>({
     );
   }
 
-  const relationshipsHasOne: Array<Relationship> = relationships.filter(
-    (item) => item.type === 'hasOne'
-  );
-  const relationshipsHasMany: Array<Relationship> = relationships.filter(
-    (item) => item.type === 'hasMany'
-  );
-
-  const attributes = lodash.differenceWith(
-    Object.entries(data.data),
-    relationships,
-    ([key], othVal) => key === othVal.key
-  );
+  let attributes;
+  if (hasOne && hasOne.length > 0) {
+    attributes = lodash.differenceWith(
+      // $FlowFixMe
+      Object.entries(data.data),
+      hasOne,
+      ([key], othVal) => key === othVal.field
+    );
+  } else {
+    // TODO hard code attributes
+    // $FlowFixMe
+    attributes = Object.entries(data.data);
+  }
 
   return (
     <Grid container spacing={2}>
@@ -116,12 +127,12 @@ function Details<Y, X: Model<Y>>({
         </Card>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        {Boolean(relationshipsHasOne.length > 0) && (
+        {Boolean(hasOne && hasOne.length > 0) && (
           <Card>
             <CardContent>
-              {relationshipsHasOne.map((item) => {
+              {hasOne.map((item) => {
                 return (
-                  <React.Fragment key={item.key}>
+                  <React.Fragment key={item.field}>
                     <Box
                       width="100%"
                       display="flex"
@@ -129,12 +140,12 @@ function Details<Y, X: Model<Y>>({
                       justifyContent="space-between"
                     >
                       <Typography variant="subtitle2">
-                        {lodash.upperFirst(lodash.lowerCase(item.key))}
+                        {lodash.upperFirst(lodash.lowerCase(item.field))}
                       </Typography>
                       <IconButton
                         // $FlowFixMe
                         onClick={() => {
-                          const urlId = data.data[item.key];
+                          const urlId = data.data[item.field];
                           const url = item.onNavigate(urlId);
                           navigate(url);
                         }}
@@ -152,23 +163,31 @@ function Details<Y, X: Model<Y>>({
           </Card>
         )}
       </Grid>
-      <Hidden mdDown>
-        <Grid item md={4} lg={6} />
-      </Hidden>
-      {relationshipsHasMany.map((item) => {
-        const repo = new Repository(item.model);
-
-        return (
-          <Grid key={item.key} item xs={12} sm={6} xl={4}>
-            <Table
-              columns={item.columns}
-              onNavigate={item.onNavigate}
-              repository={repo}
-              title={item.title}
-            />
-          </Grid>
-        );
-      })}
+      <Grid item xs={12}>
+        <Divider variant="middle" />
+      </Grid>
+      {Boolean(hasMany && hasMany.length > 0) &&
+        hasMany.map((item) => {
+          const repo = new Repository(item.model, {
+            parent: {
+              key: item.field,
+              value: data.id
+            }
+          });
+          return (
+            <Grid key={item.key} item xs={12} md={6} xl={4}>
+              <Table
+                columns={item.columns}
+                onNavigate={item.onNavigate}
+                repository={repo}
+                title={item.title}
+              />
+            </Grid>
+          );
+        })}
+      <Grid item xs={12}>
+        <Divider variant="middle" />
+      </Grid>
       {Boolean(children && Array.isArray(children)) &&
         children.map((child) => (
           <Grid key={child.key} item xs={12} sm={6} xl={4}>
@@ -178,5 +197,11 @@ function Details<Y, X: Model<Y>>({
     </Grid>
   );
 }
+
+Details.defaultProps = {
+  hasOne: null,
+  hasMany: null,
+  children: null
+};
 
 export default Details;

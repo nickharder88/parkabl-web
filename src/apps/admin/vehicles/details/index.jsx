@@ -10,10 +10,9 @@ type Props = {
   id: string
 };
 
-const relationships = [
+const hasOne = [
   {
-    key: 'tenant',
-    type: 'hasOne',
+    field: 'tenant',
     title: 'Tenant',
     model: TenantModel,
     onNavigate: (id: string) => `/app/admin/tenants/${id}`
@@ -26,7 +25,7 @@ function Details({ id }: Props) {
       id={id}
       title="Vehicle"
       model={VehicleModel}
-      relationships={relationships}
+      hasOne={hasOne}
     />
   );
 }

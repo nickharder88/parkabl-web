@@ -13,8 +13,6 @@ import TenantModel, { type Tenant } from '../../../models/tenant';
 import Table from '../../../components/table';
 
 function Tenants() {
-  // pull columns into tenant model attribute. Dynamically generate page
-
   const [repository] = useState<Repository<Tenant, TenantModel>>(
     new Repository<Tenant, TenantModel>(TenantModel)
   );

@@ -1,32 +1,51 @@
 // @flow
 
 import React from 'react';
-import PropertyModel from '../../../../models/property';
 
 import GenericDetails from '../../../../components/details';
 import TenantModel from '../../../../models/tenant';
+import PropertyModel from '../../../../models/property';
+import VehicleModel from '../../../../models/vehicle';
+import TextField from '@material-ui/core/TextField';
 
 type Props = {
   id: string
 };
 
-const relationships = [
+const hasOne = [
   {
-    key: 'property',
-    type: 'hasMany',
-    title: 'Properties',
+    field: 'property',
+    title: 'Property',
     model: PropertyModel,
+    onNavigate: (id: string) => `/app/admin/properties/${id}`
+  }
+];
+
+const hasMany = [
+  {
+    key: 'vehicles',
+    field: 'tenant',
+    title: 'Vehicles',
+    model: VehicleModel,
+    onNavigate: (id: string) => `/app/admin/vehicles/${id}`,
     columns: [
       {
-        title: 'Address',
-        field: 'address'
+        title: 'Make',
+        field: 'make'
       },
       {
-        title: 'Landlord',
-        field: 'landlord'
+        title: 'Model',
+        field: 'model'
+      },
+      {
+        title: 'License',
+        field: 'licensePlateNum'
+      },
+      {
+        title: 'State',
+        field: 'state'
       }
-    ],
-    onNavigate: (id: string) => `/app/admin/properties/${id}`
+    ]
   }
 ];
 
@@ -36,7 +55,8 @@ function Details({ id }: Props) {
       id={id}
       title="Tenant"
       model={TenantModel}
-      relationships={relationships}
+      hasOne={hasOne}
+      hasMany={hasMany}
     />
   );
 }

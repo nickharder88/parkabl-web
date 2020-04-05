@@ -14,6 +14,10 @@ export type Hooks<Y> = {
 };
 
 export type RepositoryOptions<Y> = {
+  parent?: {
+    key: string,
+    value: string
+  },
   hooks?: Hooks<Y>
 };
 
@@ -43,11 +47,17 @@ class Repository<Y, X: Model<Y>> {
   list(): Observable<Array<X>> {
     const subject = new Subject<Array<X>>([]);
 
-    db.collection(this.model.collection)
-      .withConverter(this.model.converter)
-      .onSnapshot((querySnapshot) => {
-        subject.next(querySnapshot.docs.map((doc) => doc.data()));
-      });
+    let ref = db.collection(this.model.collection);
+    if (this.options && this.options.parent) {
+      // Filter by a Parent Property
+      // Use Case: hasOne
+      // Example: Tenants have a Property. Show all tenants for a property
+      ref = ref.where(this.options.parent.key, '==', this.options.parent.value);
+    }
+
+    ref.withConverter(this.model.converter).onSnapshot((querySnapshot) => {
+      subject.next(querySnapshot.docs.map((doc) => doc.data()));
+    });
 
     return subject.asObservable();
   }
