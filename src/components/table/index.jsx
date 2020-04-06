@@ -23,6 +23,8 @@ import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import Remove from '@material-ui/icons/Remove';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
+import useAlert from '../../hooks/useSnackbar';
+
 import Repository from '../../repositories/repository';
 import Model from '../../models/model';
 
@@ -59,6 +61,7 @@ function Table<Y, X: Model<Y>>({
   editable,
   associable
 }: Props<Y, X>) {
+  const { createError, createSuccess } = useAlert();
   const [menuAssociateAnchorEl, setMenuAssociateAnchorEl] = useState();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<Array<Y>>([]);
@@ -142,7 +145,14 @@ function Table<Y, X: Model<Y>>({
   }
 
   function handleMenuItemAssociateClick(id: string) {
-    repository.associate(id);
+    repository
+      .associate(id)
+      .then(() => {
+        createSuccess('Success');
+      })
+      .catch(() => {
+        createError('Error');
+      });
   }
 
   let actions;
@@ -154,7 +164,14 @@ function Table<Y, X: Model<Y>>({
         )),
         tooltip: 'Dissociate',
         onClick: (event, rowData) => {
-          repository.dissociate(rowData.id);
+          repository
+            .dissociate(rowData.id)
+            .then(() => {
+              createSuccess('Success');
+            })
+            .catch(() => {
+              createError('Error');
+            });
         }
       },
       {
@@ -170,15 +187,38 @@ function Table<Y, X: Model<Y>>({
   let editableObj;
   if (editable) {
     editableObj = {
-      onRowAdd: (newData: Y) => repository.create(newData),
+      onRowAdd: (newData: Y) =>
+        repository
+          .create(newData)
+          .then(() => {
+            createSuccess('Success');
+          })
+          .catch(() => {
+            createError('Error');
+          }),
       onRowUpdate: (newData, oldData) => {
         const updated = {
           ...newData
         };
         delete updated.id;
-        return repository.update(oldData.id, updated);
+        return repository
+          .update(oldData.id, updated)
+          .then(() => {
+            createSuccess('Success');
+          })
+          .catch(() => {
+            createError('Error');
+          });
       },
-      onRowDelete: (oldData: { id: string }) => repository.delete(oldData.id)
+      onRowDelete: (oldData: { id: string }) =>
+        repository
+          .delete(oldData.id)
+          .then(() => {
+            createSuccess('Success');
+          })
+          .catch(() => {
+            createError('Error');
+          })
     };
   }
 

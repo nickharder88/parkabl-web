@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@date-io/core": "^2.5.0",
-    "@material-ui/core": "latest",
+    "@material-ui/core": "4.9.9",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.48",
     "@material-ui/styles": "latest",
