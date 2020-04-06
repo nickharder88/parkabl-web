@@ -40,6 +40,7 @@ function List() {
     {
       title: 'Address',
       field: 'address',
+      model: AddressModel,
       editComponent: (props) => (
         <SelectModel
           model={AddressModel}

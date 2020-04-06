@@ -1,8 +1,8 @@
 // @flow
 
-import React, { useEffect, useState, forwardRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStaticQuery } from 'gatsby';
-import { Router, Redirect } from '@reach/router';
+import { Router } from '@reach/router';
 
 import Layout from '../../../components/layout';
 import PrivateRoute from '../../../components/privateRoute';

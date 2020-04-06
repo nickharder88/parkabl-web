@@ -1,6 +1,6 @@
 // @flow
 
-import React, { type Node, forwardRef } from 'react';
+import React, { type Node } from 'react';
 
 import MuiTextField from '@material-ui/core/TextField';
 

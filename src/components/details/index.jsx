@@ -210,6 +210,8 @@ function Details<Y, X: Model<Y>>({
                 onNavigate={item.onNavigate}
                 repository={repo}
                 title={item.title}
+                editable={false}
+                associable={true}
               />
             </Grid>
           );

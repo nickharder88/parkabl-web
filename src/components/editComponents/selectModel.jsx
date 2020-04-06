@@ -43,9 +43,6 @@ function SelectModel<Y, X: Model<Y>>({
     });
   }, [repo]);
 
-  console.log(value);
-  console.log(options);
-
   return (
     <Select
       fullWidth

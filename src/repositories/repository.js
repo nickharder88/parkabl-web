@@ -62,41 +62,63 @@ class Repository<Y, X: Model<Y>> {
     return subject.asObservable();
   }
 
-  // trying to trigger on create/update to create geohash
-  async create(data: Y): Promise<X> {
-    const newData = await this.onCreate(data);
+  remaining(): Observable<Array<X>> {
+    if (!this.options || !this.options.parent) {
+      throw 'Expected Parent Value to Filter';
+    }
 
-    return db
-      .collection(this.model.collection)
-      .add(newData)
-      .then((docRef) =>
-        db
-          .collection(this.model.collection)
-          .doc(docRef.id)
-          .withConverter(this.model.converter)
-          .get()
-      );
+    const subject = new Subject<Array<X>>([]);
+    db.collection(this.model.collection)
+      .withConverter(this.model.converter)
+      .onSnapshot((querySnapshot) => {
+        subject.next(
+          querySnapshot.docs
+            .map((doc) => doc.data())
+            .filter(
+              (item) =>
+                item.data[this.options.parent.key] !== this.options.parent.value
+            )
+        );
+      });
+    return subject.asObservable();
   }
 
-  async update(id: string, data: Y): Promise<X> {
-    const newData = await this.onUpdate(data);
+  // trying to trigger on create/update to create geohash
+  async create(data: Y): Promise<void> {
+    const newData = await this.onCreate(data);
+    return db.collection(this.model.collection).add(newData);
+  }
 
-    return db
-      .collection(this.model.collection)
-      .doc(id)
-      .set(newData)
-      .then(() =>
-        db
-          .collection(this.model.collection)
-          .doc(id)
-          .withConverter(this.model.converter)
-          .get()
-          .then((doc) => doc.data())
-      );
+  async update(id: string, data: Y): Promise<void> {
+    const newData = await this.onUpdate(data);
+    return db.collection(this.model.collection).doc(id).update(newData);
   }
 
   delete(key: string): Promise<void> {
     return db.collection(this.model.collection).doc(key).delete();
+  }
+
+  // Associate doc(id) with parent
+  associate(id: string): Promise<void> {
+    if (!this.options || !this.options.parent) {
+      throw 'Expected parent to be defined';
+    }
+
+    return db
+      .collection(this.model.collection)
+      .doc(id)
+      .update({ [this.options.parent.key]: this.options.parent.value });
+  }
+
+  dissociate(id: string): Promise<void> {
+    if (!this.options || !this.options.parent) {
+      throw 'Expected parent to be defined';
+    }
+
+    return db
+      .collection(this.model.collection)
+      .doc(id)
+      .update({ [this.options.parent.key]: null });
   }
 
   // HOOKS
