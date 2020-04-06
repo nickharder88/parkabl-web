@@ -13,6 +13,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
@@ -58,6 +59,7 @@ function Details<Y, X: Model<Y>>({
   children
 }: Props<X>) {
   const [data, setData] = useState<?X>();
+  const [hasOneLoading, setHasOneLoading] = useState<boolean>(false);
   const [hasOneValues, setHasOneValues] = useState();
   // $FlowFixMe
   const [repository] = useState<Repository<Y, X>>(
@@ -78,6 +80,7 @@ function Details<Y, X: Model<Y>>({
     }
 
     if (hasOne && hasOne.length > 0) {
+      setHasOneLoading(true);
       Promise.all(
         hasOne.map(async (item) => {
           const found = await item.model.find(data.data[item.field]);
@@ -87,7 +90,14 @@ function Details<Y, X: Model<Y>>({
             value
           };
         })
-      ).then(setHasOneValues);
+      )
+        .then((items) => {
+          setHasOneLoading(false);
+          setHasOneValues(items);
+        })
+        .catch(() => {
+          setHasOneLoading(false);
+        });
     }
   }, [data, hasOne]);
 
@@ -148,83 +158,96 @@ function Details<Y, X: Model<Y>>({
         </Card>
       </Grid>
       <Grid item xs={12} sm={6} lg={4}>
-        {Boolean(hasOneValues && hasOneValues.length > 0) && (
+        {Boolean(hasOne && hasOne.length > 0) && (
           <Card>
             <CardContent>
-              {hasOneValues.map((item) => {
-                return (
-                  <React.Fragment key={item.field}>
-                    <Box
-                      width="100%"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <Box
-                        display="flex"
-                        alignItems="flex-start"
-                        justifyContent="center"
-                        flexDirection="column"
-                      >
-                        <Typography variant="caption">
-                          {lodash.upperFirst(lodash.lowerCase(item.field))}
-                        </Typography>
-                        {item.value && <Typography>{item.value}</Typography>}
-                      </Box>
-                      <IconButton
-                        // $FlowFixMe
-                        onClick={() => {
-                          const urlId = data.data[item.field];
-                          const url = item.onNavigate(urlId);
-                          navigate(url);
-                        }}
-                      >
-                        <ExitToAppIcon />
-                      </IconButton>
-                    </Box>
-                    <Box marginBottom={2}>
-                      <Divider />
-                    </Box>
-                  </React.Fragment>
-                );
-              })}
+              {Boolean(hasOneLoading || !hasOneValues)
+                ? hasOne.map(() => <Skeleton height={58} width="100%" />)
+                : hasOneValues.map((item, index) => {
+                    return (
+                      <React.Fragment key={item.field}>
+                        <Box
+                          width="100%"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
+                          <Box
+                            display="flex"
+                            alignItems="flex-start"
+                            justifyContent="center"
+                            flexDirection="column"
+                          >
+                            <Typography variant="caption">
+                              {lodash.upperFirst(lodash.lowerCase(item.field))}
+                            </Typography>
+                            {item.value && (
+                              <Typography>{item.value}</Typography>
+                            )}
+                          </Box>
+                          <IconButton
+                            // $FlowFixMe
+                            onClick={() => {
+                              const urlId = data.data[item.field];
+                              const url = item.onNavigate(urlId);
+                              navigate(url);
+                            }}
+                          >
+                            <ExitToAppIcon />
+                          </IconButton>
+                        </Box>
+                        {Boolean(index !== hasOneValues.length - 1) && (
+                          <Box marginBottom={2}>
+                            <Divider />
+                          </Box>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
             </CardContent>
           </Card>
         )}
       </Grid>
-      <Grid item xs={12}>
-        <Divider variant="middle" />
-      </Grid>
-      {Boolean(hasMany && hasMany.length > 0) &&
-        hasMany.map((item) => {
-          const repo = new Repository(item.model, {
-            parent: {
-              key: item.field,
-              value: data.id
-            }
-          });
-          return (
-            <Grid key={item.key} item xs={12} md={6} xl={4}>
-              <Table
-                columns={item.columns}
-                onNavigate={item.onNavigate}
-                repository={repo}
-                title={item.title}
-                editable={false}
-                associable={true}
-              />
-            </Grid>
-          );
-        })}
-      <Grid item xs={12}>
-        <Divider variant="middle" />
-      </Grid>
-      {Boolean(children && Array.isArray(children)) &&
-        children.map((child) => (
-          <Grid key={child.key} item xs={12} sm={6} xl={4}>
-            {child}
+
+      {Boolean(hasMany && hasMany.length > 0) && (
+        <>
+          <Grid item xs={12}>
+            <Divider variant="middle" />
           </Grid>
-        ))}
+          {hasMany.map((item) => {
+            const repo = new Repository(item.model, {
+              parent: {
+                key: item.field,
+                value: data.id
+              }
+            });
+            return (
+              <Grid key={item.key} item xs={12} md={6} xl={4}>
+                <Table
+                  columns={item.columns}
+                  onNavigate={item.onNavigate}
+                  repository={repo}
+                  title={item.title}
+                  editable={false}
+                  associable={true}
+                />
+              </Grid>
+            );
+          })}
+        </>
+      )}
+      {Boolean(children && Array.isArray(children)) && (
+        <>
+          <Grid item xs={12}>
+            <Divider variant="middle" />
+          </Grid>
+          {children.map((child) => (
+            <Grid key={child.key} item xs={12} sm={6} xl={4}>
+              {child}
+            </Grid>
+          ))}
+        </>
+      )}
     </Grid>
   );
 }
