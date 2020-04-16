@@ -21,6 +21,7 @@ import Repository from '../../repositories/repository';
 import Model from '../../models/model';
 
 import Table, { type Column } from '../../components/table';
+import File from '../../components/file';
 
 export type RelationshipHasOne = {
   // field on this object
@@ -41,12 +42,19 @@ export type RelationshipHasMany = {
   onNavigate: (id: string) => string
 };
 
+export type FileDefinition = {
+  field: string,
+  title: string,
+  path: (value: string) => string
+};
+
 type Props<X> = {
   id: string,
   title: string,
   model: Class<X>,
   hasOne?: ?Array<RelationshipHasOne>,
   hasMany?: ?Array<RelationshipHasMany>,
+  files?: ?Array<FileDefinition>,
   children?: ?ChildrenArray<any>
 };
 
@@ -56,6 +64,7 @@ function Details<Y, X: Model<Y>>({
   model,
   hasOne,
   hasMany,
+  files,
   children
 }: Props<X>) {
   const [data, setData] = useState<?X>();
@@ -124,7 +133,17 @@ function Details<Y, X: Model<Y>>({
       hasOne,
       ([key], othVal) => key === othVal.field
     );
-  } else {
+  }
+
+  if (files && files.length > 0) {
+    attributes = lodash.differenceWith(
+      attributes,
+      files,
+      ([key], othVal) => key === othVal.field
+    );
+  }
+
+  if (!attributes) {
     // TODO hard code attributes
     // $FlowFixMe
     attributes = Object.entries(data.data);
@@ -162,7 +181,9 @@ function Details<Y, X: Model<Y>>({
           <Card>
             <CardContent>
               {Boolean(hasOneLoading || !hasOneValues)
-                ? hasOne.map(() => <Skeleton height={58} width="100%" />)
+                ? hasOne.map((item) => (
+                    <Skeleton key={item.field} height={58} width="100%" />
+                  ))
                 : hasOneValues.map((item, index) => {
                     return (
                       <React.Fragment key={item.field}>
@@ -208,7 +229,6 @@ function Details<Y, X: Model<Y>>({
           </Card>
         )}
       </Grid>
-
       {Boolean(hasMany && hasMany.length > 0) && (
         <>
           <Grid item xs={12}>
@@ -234,6 +254,34 @@ function Details<Y, X: Model<Y>>({
               </Grid>
             );
           })}
+        </>
+      )}
+      {Boolean(files && files.length > 0) && (
+        <>
+          <Grid item xs={12}>
+            <Divider variant="middle" />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography>Files</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Box
+              width="100%"
+              display="flex"
+              alignItems="center"
+              justifyContent="flex-start"
+            >
+              {files.map((item) => {
+                return (
+                  <File
+                    key={item.field}
+                    title={item.title}
+                    path={item.path(`${data.id}:${item.field}`)}
+                  />
+                );
+              })}
+            </Box>
+          </Grid>
         </>
       )}
       {Boolean(children && Array.isArray(children)) && (

@@ -19,6 +19,14 @@ const hasOne = [
   }
 ];
 
+const files = [
+  {
+    field: 'image',
+    title: 'Image',
+    path: (value: string) => `vehicles/images/${value}`
+  }
+];
+
 function Details({ id }: Props) {
   return (
     <GenericDetails
@@ -26,6 +34,7 @@ function Details({ id }: Props) {
       title="Vehicle"
       model={VehicleModel}
       hasOne={hasOne}
+      files={files}
     />
   );
 }
